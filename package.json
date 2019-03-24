@@ -1,0 +1,31 @@
+{
+  "name": "unzip-js",
+  "version": "1.0.0",
+  "description": "unzip .ZIP files in the browser",
+  "keywords": [
+    "zip",
+    "unzip",
+    "stream",
+    "archive",
+    "file",
+    "blob",
+    "browser"
+  ],
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Merzouqi/unzip-js.git"
+  },
+  "author": "Hoummad Merzouqi <hoummad.merzouqi@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Merzouqi/unzip-js/issues"
+  },
+  "homepage": "https://github.com/Merzouqi/unzip-js#readme",
+  "dependencies": {
+    "blob-slicer": "^1.0.0"
+  },
+  "devDependencies": {
+    "standard": "^12.0.1"
+  }
+}
