@@ -23,7 +23,8 @@
   },
   "homepage": "https://github.com/Merzouqi/unzip-js#readme",
   "dependencies": {
-    "blob-slicer": "^1.0.0"
+    "blob-slicer": "^1.0.0",
+    "buffer-crc32": "^0.2.13"
   },
   "devDependencies": {
     "standard": "^12.0.1"
