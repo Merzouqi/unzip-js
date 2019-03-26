@@ -150,7 +150,10 @@ function readUInt64LE (buffer, offset) {
 function E (message) {
   var args = arguments
   return new Error(
-    message.replace(/{(\d+)}/g, function (match, p) { return args[+p + 1] || match })
+    message.replace(/{(\d+)}/g, function (match, p) {
+      var r = args[+p + 1]
+      return r === undefined ? match : r
+    })
   )
 }
 
