@@ -167,7 +167,7 @@ ZipFile.prototype.readEntries = function (callback) {
         entry.uncompressedSize === 0xffffffff ||
         entry.localHeaderOffset === 0xffffffff
       ) {
-        var zip64EIEF = entry.extraField.filter(function (ef) {
+        var zip64EIEF = entry.extraFields.filter(function (ef) {
           return ef.headerId === 0x0001
         })[0]
         if (zip64EIEF) {
