@@ -28,12 +28,15 @@
   },
   "devDependencies": {
     "airtap": "^2.0.2",
+    "coveralls": "^3.0.3",
+    "nyc": "^13.3.0",
     "standard": "^12.0.1",
     "tape": "^4.10.1"
   },
   "scripts": {
     "lint": "standard --global XMLHttpRequest --global Blob",
-    "test": "npm run lint && airtap -- test/*.js",
-    "test-local": "airtap --local test/test.js"
+    "test": "npm run lint && airtap --coverage test/*.js",
+    "test-local": "airtap --local test/test.js",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   }
 }
