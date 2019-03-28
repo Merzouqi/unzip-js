@@ -137,7 +137,15 @@ ZipFile.prototype.readEntries = function (callback) {
       }
       // Info-ZIP Unicode Path/Comment Extra Field
       ;['name', 'comment'].forEach(function (field) {
-        var headerId = field === 'name' ? 0x7075 : 0x6375
+        var headerId
+        var oldData
+        if (field === 'name') {
+          headerId = 0x7075
+          oldData = variableFieldsBuffer.slice(0, nameLength)
+        } else {
+          headerId = 0x6375
+          oldData = variableFieldsBuffer.slice(nameLength + extraFieldsLength)
+        }
         var infoZipUEFs = entry.extraFields.filter(function (ef) {
           return ef.headerId === headerId
         })
@@ -146,8 +154,7 @@ ZipFile.prototype.readEntries = function (callback) {
           var data = infoZipUEF.data
           if (data.length > 6) {
             var isVersionRecognized = data.readUInt8(0) === 1
-            var isCrcCheckPass =
-              crc32.unsigned(variableFieldsBuffer.slice(0, nameLength)) === data.readUInt32LE(1)
+            var isCrcCheckPass = crc32.unsigned(oldData) === data.readUInt32LE(1)
             var str = data.toString('utf8', 5)
             if (isVersionRecognized && isCrcCheckPass && str.length > 0) entry[field] = str
           }
