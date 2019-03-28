@@ -55,7 +55,7 @@ function readEOCDRecord (reader, callback) {
       eocdr.cdOffset === 0xffffffff
     ) {
       readEOCD64Record(reader, offset, function (err, eocd64r) {
-        eocd64r.comment = eocdr.comment
+        if (eocd64r) eocd64r.comment = eocdr.comment
         callback(err, eocd64r)
       })
     } else callback(null, eocdr)
