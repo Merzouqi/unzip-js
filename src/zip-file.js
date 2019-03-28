@@ -201,6 +201,7 @@ ZipFile.prototype.readEntryData = function (entry, checkCrc, callback) {
   }
 
   var fixedFieldsSize = 30
+  var self = this
   this._reader.read(
     entry.localHeaderOffset,
     entry.localHeaderOffset + fixedFieldsSize,
@@ -231,7 +232,7 @@ ZipFile.prototype.readEntryData = function (entry, checkCrc, callback) {
       var extraFieldLength = buf.readUInt16LE(28)
 
       var dataStart = entry.localHeaderOffset + fixedFieldsSize + nameLength + extraFieldLength
-      var readStream = this._reader.createReadStream({
+      var readStream = self._reader.createReadStream({
         start: dataStart,
         end: dataStart + entry.compressedSize
       })
