@@ -27,9 +27,12 @@
     "buffer-crc32": "^0.2.13"
   },
   "devDependencies": {
-    "standard": "^12.0.1"
+    "airtap": "^2.0.2",
+    "standard": "^12.0.1",
+    "tape": "^4.10.1"
   },
   "scripts": {
-    "lint": "standard --global XMLHttpRequest"
+    "lint": "standard --global XMLHttpRequest --global Blob",
+    "test-local": "airtap --local test/test.js"
   }
 }
