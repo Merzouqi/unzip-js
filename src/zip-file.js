@@ -24,6 +24,15 @@ ZipFile.prototype.readEntries = function (callback) {
   // var variableFieldsSize = 0xffff * 3
   var self = this
 
+  callback = (function (fn) {
+    var called = false
+    return function (err, entries) {
+      if (called) return
+      called = true
+      fn(err, entries)
+    }
+  })(callback)
+
   var readStream = this._reader.createReadStream({
     // highWaterMark: (fixedFieldsSize + variableFieldsSize),
     start: this._cdOffset,
