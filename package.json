@@ -27,7 +27,7 @@
     "buffer-crc32": "^0.2.13"
   },
   "devDependencies": {
-    "airtap": "^2.0.2",
+    "airtap": "^1.0.2",
     "coveralls": "^3.0.3",
     "nyc": "^13.3.0",
     "standard": "^12.0.1",
