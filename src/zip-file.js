@@ -21,7 +21,6 @@ function ZipFile (reader, eocdr) {
 
 ZipFile.prototype.readEntries = function (callback) {
   var fixedFieldsSize = 46
-  // var variableFieldsSize = 0xffff * 3
   var self = this
 
   callback = (function (fn) {
@@ -34,7 +33,6 @@ ZipFile.prototype.readEntries = function (callback) {
   })(callback)
 
   var readStream = this._reader.createReadStream({
-    // highWaterMark: (fixedFieldsSize + variableFieldsSize),
     start: this._cdOffset,
     end: (this._cdOffset + this._cdSize)
   })
@@ -103,13 +101,13 @@ ZipFile.prototype.readEntries = function (callback) {
       // relative offset of local header 4 bytes
       entry.localHeaderOffset = fixedFieldsBuffer.readUInt32LE(42)
 
-      var totalVariableSize = nameLength + extraFieldsLength + commentLength
-      if (this.readableLength < totalVariableSize) {
+      var variableFieldsSize = nameLength + extraFieldsLength + commentLength
+      if (this.readableLength < variableFieldsSize) {
         if (this.ended) {
           return destroyAndDrain(
             E(
               'expected at least {0} bytes for variable fields in Central File Header got {1}',
-              totalVariableSize,
+              variableFieldsSize,
               this.readableLength
             )
           )
@@ -117,7 +115,7 @@ ZipFile.prototype.readEntries = function (callback) {
         this.unshift(fixedFieldsBuffer)
         break
       }
-      var variableFieldsBuffer = this.read(totalVariableSize)
+      var variableFieldsBuffer = this.read(variableFieldsSize)
 
       // file name (variable size)
       entry.name = variableFieldsBuffer.slice(0, nameLength)
@@ -162,10 +160,10 @@ ZipFile.prototype.readEntries = function (callback) {
         infoZipUEFs.forEach(function (infoZipUEF) {
           var data = infoZipUEF.data
           if (data.length > 6) {
-            var isVersionRecognized = data.readUInt8(0) === 1
-            var isCrcCheckPass = crc32.unsigned(oldData) === data.readUInt32LE(1)
+            var versionRecognized = data.readUInt8(0) === 1
+            var crcCheckPassed = crc32.unsigned(oldData) === data.readUInt32LE(1)
             var str = data.toString('utf8', 5)
-            if (isVersionRecognized && isCrcCheckPass && str.length > 0) entry[field] = str
+            if (versionRecognized && crcCheckPassed && str.length > 0) entry[field] = str
           }
         })
       })
@@ -265,13 +263,13 @@ ZipFile.prototype.readEntryData = function (entry, checkCrc, callback) {
       if (checkCrc) {
         var partialCrc
         var crcTransform = new Transform({
-          transform (chunk, encoding, callback) {
+          transform: function (chunk, encoding, callback) {
             partialCrc = crc32(chunk, partialCrc)
             callback(null, chunk)
           },
-          flush (callback) {
+          flush: function (callback) {
             var finalCrc = partialCrc.readUInt32BE(0)
-            callback(finalCrc === entry.crc32 ? null : E('corrupted file'))
+            callback(finalCrc === entry.crc32 ? null : E('corrupted file: crc check fails'))
           }
         })
         outStream = outStream
