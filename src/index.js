@@ -20,9 +20,13 @@ module.exports = function load (source, callback) {
         }
       }
     })
-    xhr.open('GET', source)
-    xhr.responseType = 'blob'
-    xhr.send()
+    try {
+      xhr.open('GET', source)
+      xhr.responseType = 'blob'
+      xhr.send()
+    } catch (err) {
+      callback(err)
+    }
   } else {
     try {
       var reader = new BlobSlicer(source)
