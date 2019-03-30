@@ -1,5 +1,8 @@
+var dir = '/test/zip-files/'
+
 exports.success = [
   'cp437.zip',
+  'crc32-check-passes.zip',
   'deflate.zip',
   'directories.zip',
   'empty.zip',
@@ -13,7 +16,7 @@ exports.success = [
 ].map(function (e) {
   var testCase = {
     name: e.replace(/.zip$/, ''),
-    file: e,
+    source: dir + e,
     expectedComment: ''
   }
 
@@ -62,6 +65,11 @@ exports.success = [
   testCase.expectedContents = expectedContents
 
   return testCase
+}).concat({
+  name: 'unzip from Blob',
+  source: new Blob([Buffer.from('UEsFBgAAAAAAAAAAAAAAAAAAAAAAAA==', 'base64').toString()]),
+  expectedContents: [],
+  expectedComment: ''
 })
 
 exports.failure = [
@@ -76,6 +84,10 @@ exports.failure = [
   [
     'central-header-no-enough-data-for-variable-fields.zip',
     'expected at least 45 bytes for variable fields in Central File Header got 44'
+  ],
+  [
+    'crc32-check-fails.zip',
+    'corrupted file: crc check fails'
   ],
   [
     'encrypted.zip',
@@ -130,13 +142,21 @@ exports.failure = [
     'Zip64 Extended Information Extra Field not found'
   ],
   [
+    'not-found.zip',
+    'network error: 404 Not Found'
+  ],
+  [
     'unsupported-compression-method-deflate64.zip',
     'compression method is not supported'
   ]
 ].map(function (e) {
   return {
     name: e[0].replace(/.zip$/, ''),
-    file: e[0],
+    source: dir + e[0],
     expectedErrorMessage: e[1]
   }
+}).concat({
+  name: 'invalid argument',
+  source: {},
+  expectedErrorMessage: '"blob" argument must be an instance of Blob or File'
 })
